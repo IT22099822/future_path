@@ -34,12 +34,18 @@ function AgentHomePage() {
       </Link>
 
       <Link to="/login">
-        <button>Login</button>
+        <button>Login</button> </Link>
 
       <Link to="/register">
         <button>Register</button>
 
       </Link>
+
+      <Link to="/register">
+        <button>Register123</button>
+
+      </Link>
+
 
     </div>
   );
