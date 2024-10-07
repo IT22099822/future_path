@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import './index.css'; // Import Tailwind CSS here
 import PreLoginPage from './components/PreLoginPage';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';

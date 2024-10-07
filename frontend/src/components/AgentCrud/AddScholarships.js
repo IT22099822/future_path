@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './AddScholarships.module.css';
 
 function AddScholarships() {
     const [formData, setFormData] = useState({
@@ -79,119 +78,134 @@ function AddScholarships() {
     };
 
     return (
-        <div className={styles.scholarshipsPage}>
-            <div className={styles.scholarshipFormWrapper}>
-                <h1>Add Scholarship</h1>
-                {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+        <div className="flex justify-center items-center min-h-screen bg-gray-100">
+            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-xl">
+                <h1 className="text-3xl font-semibold mb-6">Add Scholarship</h1>
+                {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
-                    <div className={styles.inputBox}>
+                    <div className="mb-4">
                         <input 
                             type="text" 
                             name="scholarshipTitle" 
                             placeholder="Scholarship Title" 
                             value={formData.scholarshipTitle} 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg" 
                             required 
                         />
                     </div>
-                    <div className={styles.inputBox}>
+                    <div className="mb-4">
                         <input 
                             type="text" 
                             name="organization" 
                             placeholder="Organization" 
                             value={formData.organization} 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg" 
                             required 
                         />
                     </div>
-                    <div className={styles.inputBox}>
+                    <div className="mb-4">
                         <input 
                             type="date" 
                             name="applicationDeadline" 
                             value={formData.applicationDeadline} 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg" 
                             required 
                         />
                     </div>
-                    <div className={styles.inputBox}>
+                    <div className="mb-4">
                         <input 
                             type="text" 
                             name="eligibilityCriteria" 
                             placeholder="Eligibility Criteria" 
                             value={formData.eligibilityCriteria} 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg" 
                             required 
                         />
                     </div>
-                    <div className={styles.inputBox}>
+                    <div className="mb-4">
                         <input 
                             type="url" 
                             name="applicationLink" 
                             placeholder="Application Link" 
                             value={formData.applicationLink} 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg" 
                             required 
                         />
                     </div>
-                    <div className={styles.inputBox}>
+                    <div className="mb-4">
                         <textarea 
                             name="description" 
                             placeholder="Description" 
                             value={formData.description} 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg" 
                             required 
                         />
                     </div>
-                    <div className={styles.inputBox}>
+                    <div className="mb-4">
                         <input 
                             type="text" 
                             name="scholarshipType" 
                             placeholder="Scholarship Type" 
                             value={formData.scholarshipType} 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg" 
                             required 
                         />
                     </div>
-                    <div className={styles.inputBox}>
+                    <div className="mb-4">
                         <input 
                             type="text" 
                             name="fieldOfStudy" 
                             placeholder="Field of Study" 
                             value={formData.fieldOfStudy} 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg" 
                             required 
                         />
                     </div>
-                    <div className={styles.inputBox}>
+                    <div className="mb-4">
                         <input 
                             type="text" 
                             name="country" 
                             placeholder="Country" 
                             value={formData.country} 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg" 
                             required 
                         />
                     </div>
-                    <div className={styles.inputBox}>
+                    <div className="mb-4">
                         <textarea 
                             name="applicationRequirements" 
                             placeholder="Application Requirements" 
                             value={formData.applicationRequirements} 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg" 
                             required 
                         />
                     </div>
-                    <div className={styles.inputBox}>
+                    <div className="mb-6">
                         <input 
                             type="file" 
                             name="image" 
                             accept="image/*" 
                             onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg"
                         />
                     </div>
-                    <button className={styles.submitButton} type="submit">Add Scholarship</button>
+                    <button className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition duration-300" type="submit">
+                        Add Scholarship
+                    </button>
                 </form>
-                <button className={styles.navigateButton} onClick={() => navigate('/update-scholarships')}>Update Scholarships</button>
+                <button className="mt-4 w-full bg-gray-500 text-white p-3 rounded-lg hover:bg-gray-600 transition duration-300" onClick={() => navigate('/update-scholarships')}>
+                    Update Scholarships
+                </button>
             </div>
         </div>
     );
