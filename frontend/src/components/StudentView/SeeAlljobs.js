@@ -32,6 +32,16 @@ function SeeAllJobs() {
                 {jobs.map(job => (
                     <li key={job._id} className={styles.jobCard}> {/* Apply the jobCard class */}
                         <h2 className={styles.jobTitle}>{job.jobTitle}</h2>
+
+                        {/* Display job image if available */}
+                        {job.image && (
+                            <img 
+                                src={job.image} // Use the full image URL returned by the backend
+                                alt={`${job.jobTitle}`} 
+                                className={styles.jobImage} // Add class for image styling
+                            />
+                        )}
+
                         <div className={styles.jobDetails}>
                             <p><strong>Company:</strong> {job.companyName}</p>
                             <p><strong>Location:</strong> {job.location}</p>
@@ -51,6 +61,7 @@ function SeeAllJobs() {
                                 </p>
                             )}
                         </div>
+
                         <p>
                             <strong>Added by:</strong>{' '}
                             <button
