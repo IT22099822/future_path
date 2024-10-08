@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LogoWithSocial from "../components/LogoWithSocial";
-import NavBar from "../components/NavBar";
+
+import AgentNavBar from '../components/AgentNavbar';
 
 function AddScholarships() {
     const [formData, setFormData] = useState({
@@ -66,8 +66,7 @@ function AddScholarships() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a]">
-            <LogoWithSocial />
-            <NavBar />
+            <AgentNavBar/>
             
             <div className="flex justify-center items-center w-full mt-10">
                 <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-xl">

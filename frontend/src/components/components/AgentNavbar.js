@@ -14,7 +14,7 @@ const NavBar = () => {
 
   return (
     <div
-      className={`fixed top-0 left-0 h-full w-64 bg-gray-300/70 rounded-tr-2xl rounded-br-2xl
+      className={`fixed top-0 left-0 h-full w-80 bg-gray-300/70 rounded-tr-2xl rounded-br-2xl
       transition-transform duration-700 ease-in-out transform ${
         isVisible ? "translate-x-0" : "-translate-x-full"
       } z-50 backdrop-blur-1xl`}
