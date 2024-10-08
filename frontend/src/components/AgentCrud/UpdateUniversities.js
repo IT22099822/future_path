@@ -57,18 +57,50 @@ function UpdateUniversities() {
 
     const generatePDF = () => {
         const pdf = new jsPDF();
-
-        // Add website logo at the top
         const logoImg = new Image();
         logoImg.src = logo;
         logoImg.onload = () => {
-            pdf.addImage(logoImg, 'PNG', 10, 10, 50, 20); // Adjust logo size and position
+            // Add the logo
+            pdf.addImage(logoImg, 'PNG', 10, 10, 50, 20); // Logo Position
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'normal');
+    
+            // Set up the header
+            const headerY = 10; // Y position for header
+            const headerWidth = 180; // Width of the header box
+            const headerHeight = 65; // Height of the header box
+    
+            // Move company information further to the right
+            const textX = 90; // Increased X position for text to move it further right
+            pdf.text('Future Path (PVT) LTD', textX, headerY + 10);
+            pdf.text('SLIIT, Malabe, Colombo', textX, headerY + 20);
+            pdf.text('+94 771165416', textX, headerY + 30);
+            pdf.text('contact@future_path.com', textX, headerY + 40);
+            pdf.text('www.futurepath.com', textX, headerY + 50);
+    
 
+    
+            // Add a line separating the header from the content
+            pdf.setLineWidth(0.5); // Set line width
+            pdf.line(10, headerY + 70, 200, headerY + 70); // Draw the line from left to right
+
+
+            // Add an extra line after the separator
+            let yPosition = headerY + 80; // Move content down one line
+
+                                    // Add generation date and time
+                                    const date = new Date();
+                                    const formattedDate = `Report generated on: ${date.toLocaleString()}`;
+                                    pdf.text(formattedDate, textX, headerY + 60); // Position for date and time
+                
+    
+            // Title for the report
             pdf.setFontSize(22);
             pdf.setFont('helvetica', 'bold');
-            pdf.text('University Listings Report', 10, 40);
-
-            let yPosition = 50;
+            pdf.text('University Listings Report', 10, yPosition); // Adjusted position for report title
+    
+            // Iterate over each university and add the details to the PDF
+            yPosition += 10; // Add space after the title
             pdf.setFontSize(12);
             filteredUniversities.forEach((university, index) => {
                 pdf.text(`University #${index + 1}`, 10, yPosition);
@@ -87,20 +119,24 @@ function UpdateUniversities() {
                 yPosition += 10;
                 pdf.text(`Established Year: ${university.establishedYear}`, 10, yPosition);
                 yPosition += 20;
-
+    
+                // Draw a line between university entries
                 pdf.setLineWidth(0.5);
                 pdf.line(10, yPosition, 200, yPosition);
                 yPosition += 10;
-
+    
+                // Check if the yPosition exceeds the page height, and add a new page if necessary
                 if (yPosition > 270) {
                     pdf.addPage();
-                    yPosition = 20;
+                    yPosition = 20; // Reset y position for the new page
                 }
             });
-
+    
+            // Save the generated PDF
             pdf.save('universities_report.pdf');
         };
     };
+    
 
     const handleSearch = (e) => {
         const query = e.target.value;

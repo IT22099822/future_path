@@ -56,32 +56,52 @@ const AgentPaymentsPage = () => {
 
   const downloadPDF = async () => {
     const pdf = new jsPDF();
-
+  
     // Add logo
     const logoImg = new Image();
     logoImg.src = logo; // Use the imported logo
     logoImg.onload = async () => {
       pdf.addImage(logoImg, 'PNG', 10, 10, 50, 20); // Adjust dimensions as needed
-
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+  
+      // Set up the header
+      const headerY = 10; // Y position for header
+      const textX = 90; // Increased X position for text to move it further right
+      pdf.text('Future Path (PVT) LTD', textX, headerY + 10);
+      pdf.text('SLIIT, Malabe, Colombo', textX, headerY + 20);
+      pdf.text('+94 771165416', textX, headerY + 30);
+      pdf.text('contact@future_path.com', textX, headerY + 40);
+      pdf.text('www.futurepath.com', textX, headerY + 50);
+  
+      // Add generation date and time
+      const date = new Date();
+      const formattedDate = `Report generated on: ${date.toLocaleString()}`;
+      pdf.text(formattedDate, textX, headerY + 60); // Position for date and time
+  
+      // Add a line separating the header from the content
+      pdf.setLineWidth(0.5);
+      pdf.line(10, headerY + 70, 200, headerY + 70); // Draw the line from left to right
+  
+      // Move content down after the separator
+      let yPosition = headerY + 80;
+  
       // Set the title
       pdf.setFontSize(22);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('Payments Report', 105, 35, null, null, 'center');
-      pdf.setLineWidth(0.5);
-      pdf.line(20, 40, 190, 40);
-
+      pdf.text('Payments Report', 105, yPosition, null, null, 'center');
+      yPosition += 10;
+  
       // Set font for payment details
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
-
-      let yPosition = 50; // Starting y position for payments
-
+  
       // Iterate through each payment and format as a block
       payments.forEach((payment, index) => {
         pdf.setFont('helvetica', 'bold');
         pdf.text(`Payment #${index + 1}`, 20, yPosition); // Payment number
         yPosition += 10;
-
+  
         pdf.setFont('helvetica', 'normal');
         pdf.text(`Amount: ${payment.paymentAmount}`, 20, yPosition);
         yPosition += 8;
@@ -95,22 +115,24 @@ const AgentPaymentsPage = () => {
         yPosition += 8;
         pdf.text(`Student Notes: ${payment.studentNotes}`, 20, yPosition);
         yPosition += 12; // Extra space between payments
-
+  
         // Add line between payments
         pdf.setLineWidth(0.5);
         pdf.line(20, yPosition, 190, yPosition);
         yPosition += 5; // Extra space after the line
+  
+        // Check if the yPosition exceeds the page height, add new page if necessary
+        if (yPosition > 270) {
+          pdf.addPage();
+          yPosition = 20; // Reset position for the new page
+        }
       });
-
-      // Add footer information
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'italic');
-      pdf.text('Generated on: ' + new Date().toLocaleString(), 20, yPosition + 10);
-
-      // Save the PDF
-      pdf.save('payments_report.pdf');
+  
+      // Save the generated PDF
+      pdf.save('Payments_Report.pdf');
     };
   };
+  
 
   if (loading) return <p>Loading payments...</p>;
   if (error) return <p>{error}</p>;
