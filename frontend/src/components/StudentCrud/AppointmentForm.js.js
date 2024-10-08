@@ -45,43 +45,67 @@ const AppointmentForm = () => {
   };
 
   return (
-    <div>
-      <h2>Book an Appointment with Agent</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      
-      <form onSubmit={handleSubmit}>
-        {/* Date and Time */}
-        <label htmlFor="dateTime">Date and Time:</label>
-        <input
-          type="datetime-local"
-          id="dateTime"
-          value={dateTime}
-          onChange={(e) => setDateTime(e.target.value)}
-          required
-        />
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-slate-50 to-blue-400">
+      <div className="bg-blue-400 bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-md mx-auto">
+        <h2 className="text-3xl text-white text-center mb-6">Book an Appointment</h2>
+        
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Date and Time */}
+          <div>
+            <label htmlFor="dateTime" className="block text-white mb-1">Date and Time:</label>
+            <input
+              type="datetime-local"
+              id="dateTime"
+              value={dateTime}
+              onChange={(e) => setDateTime(e.target.value)}
+              required
+              className="w-full p-2 bg-transparent border border-white text-white placeholder-white rounded-md focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+            />
+          </div>
 
-        {/* Topic */}
-        <label htmlFor="topic">Topic:</label>
-        <select id="topic" value={topic} onChange={(e) => setTopic(e.target.value)} required>
-          <option value="">Select a topic</option>
-          <option value="Job">Job</option>
-          <option value="University Admission">University Admission</option>
-          <option value="Scholarship Opportunity">Scholarship Opportunity</option>
-          <option value="Other">Other</option>
-        </select>
+          {/* Topic */}
+          <div>
+            <label htmlFor="topic" className="block text-white mb-1">Topic:</label>
+            <select
+              id="topic"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              required
+              className="w-full p-2 bg-transparent border border-white text-white placeholder-white rounded-md focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+            >
+              <option value="" className="bg-slate-300">Select a topic</option>
+              <option value="Job" className="bg-slate-300">Job</option>
+              <option value="University Admission" className="bg-slate-300">University Admission</option>
+              <option value="Scholarship Opportunity" className="bg-slate-300">Scholarship Opportunity</option>
+              <option value="Other" className="bg-slate-300">Other</option>
+            </select>
+          </div>
 
-        {/* Details */}
-        <label htmlFor="details">Details:</label>
-        <textarea
-          id="details"
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
-          required
-        ></textarea>
+          {/* Details */}
+          <div>
+            <label htmlFor="details" className="block text-white mb-1">Details:</label>
+            <textarea
+              id="details"
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              required
+              className="w-full p-2 bg-transparent border border-white text-white placeholder-white rounded-md focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+            ></textarea>
+          </div>
 
-        {/* Submit Button */}
-        <button type="submit">Book Appointment</button>
-      </form>
+          {/* Submit Button */}
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="bg-white text-blue-600 py-2 px-6 rounded-md hover:bg-gray-100 transition-all duration-200"
+            >
+              Book Appointment
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
