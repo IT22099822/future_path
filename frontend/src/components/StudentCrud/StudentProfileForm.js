@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import the hook
 
 const StudentProfileForm = () => {
   const [student, setStudent] = useState({
@@ -14,6 +15,7 @@ const StudentProfileForm = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate(); // Initialize the hook
   
   // Fetch student profile
   useEffect(() => {
@@ -230,6 +232,13 @@ const StudentProfileForm = () => {
         <button type="submit" disabled={loading}>Save</button>
         <button type="button" onClick={handleDelete} disabled={loading}>Delete Profile</button>
       </form>
+
+      <div>
+        <button onClick={() => navigate('/reviews')}>Manage Reviews</button>
+        <button onClick={() => navigate('/appointments')}>My Appointments</button>
+        <button onClick={() => navigate('/appointments/approved')}>Upload Documents</button>
+        <button onClick={() => navigate('/payments')}>View My Payments</button>
+      </div>
     </div>
   );
 };

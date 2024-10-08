@@ -33,52 +33,88 @@ const AppointmentDocumentsPage = () => {
 
   const downloadPDF = () => {
     const pdf = new jsPDF();
-
+  
     // Add logo to the PDF
     const logoImg = new Image();
     logoImg.src = logo;
     logoImg.onload = () => {
       pdf.addImage(logoImg, 'PNG', 10, 10, 50, 20); // Adjust size and position as needed
-
-      // Set the title below the logo
-      pdf.setFontSize(22);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Documents for Appointment ID: ' + appointmentId, 10, 40);
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+  
+      // Set up the header
+      const headerY = 10; // Y position for header
+      const textX = 90; // Increased X position for text to move it further right
+      pdf.text('Future Path (PVT) LTD', textX, headerY + 10);
+      pdf.text('SLIIT, Malabe, Colombo', textX, headerY + 20);
+      pdf.text('+94 771165416', textX, headerY + 30);
+      pdf.text('contact@future_path.com', textX, headerY + 40);
+      pdf.text('www.futurepath.com', textX, headerY + 50);
+  
+      // Add generation date and time
+      const date = new Date();
+      const formattedDate = `Report generated on: ${date.toLocaleString()}`;
+      pdf.text(formattedDate, textX, headerY + 60); // Position for date and time
+  
+      // Add a line separating the header from the content
       pdf.setLineWidth(0.5);
-      pdf.line(10, 45, 200, 45);
-
+      pdf.line(10, headerY + 70, 200, headerY + 70); // Draw the line from left to right
+  
+      // Move content down after the separator
+      let yPosition = headerY + 80;
+  
+      // Set the title below the header
+      pdf.setFontSize(16); // Set a smaller font size for the title
+      pdf.setFont('helvetica', 'bold');
+      const titleText = 'Documents for Appointment ID:';
+      const titleIdText = appointmentId;
+      
+      // Calculate the position for the appointment ID to align it
+      const titleWidth = pdf.getTextWidth(titleText);
+      const idWidth = pdf.getTextWidth(titleIdText);
+      const titleX = 10; // X position for the title text
+      const idX = titleX + titleWidth + 5; // X position for the appointment ID (5 units space)
+  
+      pdf.text(titleText, titleX, yPosition);
+      pdf.text(titleIdText, idX, yPosition); // Position the ID next to the title
+      yPosition += 10;
+  
+      // Add another line below the title
+      pdf.setLineWidth(0.5);
+      pdf.line(10, yPosition, 200, yPosition);
+      yPosition += 5;
+  
       // Set font for document details
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
-
-      let yPosition = 50; // Starting y position for documents after the logo
-
+  
       // Iterate through each document and add to PDF
       documents.forEach((doc) => {
         const fileLink = `http://localhost:5000/${doc.filePath.replace(/\\/g, '/')}`;
-
+  
         pdf.setFont('helvetica', 'bold');
         pdf.text(`Description: ${doc.description}`, 10, yPosition);
         yPosition += 10;
-
+  
         pdf.setFont('helvetica', 'normal');
         pdf.text(`File: ${doc.filePath.split('/').pop()}`, 10, yPosition); // Show only the file name
         yPosition += 10;
-
+  
         // Add clickable link to the PDF
         pdf.textWithLink(`Link: ${fileLink}`, 10, yPosition, { url: fileLink });
         yPosition += 15; // Extra space between documents
-
+  
         // Add line between documents
         pdf.setLineWidth(0.5);
         pdf.line(10, yPosition, 200, yPosition);
         yPosition += 5; // Extra space after the line
       });
-
+  
       // Save the PDF
       pdf.save(`documents_report_${appointmentId}.pdf`);
     };
   };
+  
 
   if (loading) return <p>Loading...</p>;
 

@@ -54,59 +54,87 @@ function UpdateJobs() {
 
   const generatePDF = () => {
     const pdf = new jsPDF();
-
-    // Add website logo at the top
     const logoImg = new Image();
     logoImg.src = logo;
     logoImg.onload = () => {
-      pdf.addImage(logoImg, 'PNG', 10, 10, 50, 20); // Adjust size and position of the logo
+        // Add the logo
+        pdf.addImage(logoImg, 'PNG', 10, 10, 50, 20); // Logo Position
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
 
-      // Title for the report
-      pdf.setFontSize(22);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Job Listings Report', 10, 40);
+        // Set up the header
+        const headerY = 10; // Y position for header
+        const headerWidth = 180; // Width of the header box
+        const headerHeight = 65; // Height of the header box
 
-      // Iterate over each job and add the details to the PDF
-      let yPosition = 50; // Start position for the text
-      pdf.setFontSize(12);
-      jobs.forEach((job, index) => {
-        pdf.text(`Job #${index + 1}`, 10, yPosition);
-        yPosition += 10;
-        pdf.text(`Job Title: ${job.jobTitle}`, 10, yPosition);
-        yPosition += 10;
-        pdf.text(`Company: ${job.companyName}`, 10, yPosition);
-        yPosition += 10;
-        pdf.text(`Location: ${job.location}`, 10, yPosition);
-        yPosition += 10;
-        pdf.text(`Employment Type: ${job.employmentType}`, 10, yPosition);
-        yPosition += 10;
-        pdf.text(`Salary Range: ${job.salaryRange}`, 10, yPosition);
-        yPosition += 10;
-        pdf.text(`Job Description: ${job.jobDescription}`, 10, yPosition);
-        yPosition += 10;
-        pdf.text(`Requirements: ${job.requirements}`, 10, yPosition);
-        yPosition += 10;
-        pdf.text(`Application Deadline: ${new Date(job.applicationDeadline).toLocaleDateString()}`, 10, yPosition);
-        yPosition += 10;
-        pdf.text(`Website: ${job.websiteURL}`, 10, yPosition);
-        yPosition += 20;
+        // Move company information further to the right
+        const textX = 90; // Increased X position for text to move it further right
+        pdf.text('Future Path (PVT) LTD', textX, headerY + 10);
+        pdf.text('SLIIT, Malabe, Colombo', textX, headerY + 20);
+        pdf.text('+94 771165416', textX, headerY + 30);
+        pdf.text('contact@future_path.com', textX, headerY + 40);
+        pdf.text('www.futurepath.com', textX, headerY + 50);
 
-        // Draw a line between jobs
-        pdf.setLineWidth(0.5);
-        pdf.line(10, yPosition, 200, yPosition);
-        yPosition += 10;
+        // Add generation date and time
+        const date = new Date();
+        const formattedDate = `Report generated on: ${date.toLocaleString()}`;
+        pdf.text(formattedDate, textX, headerY + 60); // Position for date and time
 
-        // Check if the yPosition exceeds the page height
-        if (yPosition > 270) {
-          pdf.addPage();
-          yPosition = 20; // Reset the y position for the new page
-        }
-      });
+        // Add a line separating the header from the content
+        pdf.setLineWidth(0.5); // Set line width
+        pdf.line(10, headerY + 70, 200, headerY + 70); // Draw the line from left to right
 
-      // Save the PDF
-      pdf.save('jobs_report.pdf');
+        // Add an extra line after the separator
+        let yPosition = headerY + 80; // Move content down one line
+
+        // Title for the report
+        pdf.setFontSize(22);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Job Listings Report', 10, yPosition); // Adjusted position for report title
+
+        // Iterate over each job and add the details to the PDF
+        yPosition += 10; // Add space after the title
+        pdf.setFontSize(12);
+        jobs.forEach((job, index) => {
+            pdf.text(`Job #${index + 1}`, 10, yPosition);
+            yPosition += 10;
+            pdf.text(`Job Title: ${job.jobTitle}`, 10, yPosition);
+            yPosition += 10;
+            pdf.text(`Company: ${job.companyName}`, 10, yPosition);
+            yPosition += 10;
+            pdf.text(`Location: ${job.location}`, 10, yPosition);
+            yPosition += 10;
+            pdf.text(`Employment Type: ${job.employmentType}`, 10, yPosition);
+            yPosition += 10;
+            pdf.text(`Salary Range: ${job.salaryRange}`, 10, yPosition);
+            yPosition += 10;
+            pdf.text(`Job Description: ${job.jobDescription}`, 10, yPosition);
+            yPosition += 10;
+            pdf.text(`Requirements: ${job.requirements}`, 10, yPosition);
+            yPosition += 10;
+            pdf.text(`Application Deadline: ${new Date(job.applicationDeadline).toLocaleDateString()}`, 10, yPosition);
+            yPosition += 10;
+            pdf.text(`Website: ${job.websiteURL}`, 10, yPosition);
+            yPosition += 20;
+
+            // Draw a line between job entries
+            pdf.setLineWidth(0.5);
+            pdf.line(10, yPosition, 200, yPosition);
+            yPosition += 10;
+
+            // Check if the yPosition exceeds the page height, and add a new page if necessary
+            if (yPosition > 270) {
+                pdf.addPage();
+                yPosition = 20; // Reset y position for the new page
+            }
+        });
+
+        // Save the generated PDF
+        pdf.save('jobs_report.pdf');
     };
-  };
+};
+
+
 
   return (
     <div>

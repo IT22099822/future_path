@@ -126,21 +126,45 @@ const ReviewsPage = () => {
 
   const generatePDF = () => {
     const pdf = new jsPDF();
-
-    // Add the website logo at the top
     const logoImg = new Image();
     logoImg.src = logo;
     logoImg.onload = () => {
-      pdf.addImage(logoImg, 'PNG', 10, 10, 50, 20); // Adjust logo size and position
-
+      // Add the logo
+      pdf.addImage(logoImg, 'PNG', 10, 10, 50, 20); // Logo Position
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+  
+      // Set up the header
+      const headerY = 10; // Y position for header
+      const textX = 90; // Increased X position for text to move it further right
+      pdf.text('Future Path (PVT) LTD', textX, headerY + 10);
+      pdf.text('SLIIT, Malabe, Colombo', textX, headerY + 20);
+      pdf.text('+94 771165416', textX, headerY + 30);
+      pdf.text('contact@future_path.com', textX, headerY + 40);
+      pdf.text('www.futurepath.com', textX, headerY + 50);
+  
+      // Add generation date and time
+      const date = new Date();
+      const formattedDate = `Report generated on: ${date.toLocaleString()}`;
+      pdf.text(formattedDate, textX, headerY + 60); // Position for date and time
+  
+      // Add a line separating the header from the content
+      pdf.setLineWidth(0.5);
+      pdf.line(10, headerY + 70, 200, headerY + 70); // Draw the line from left to right
+  
+      // Move content down after the separator
+      let yPosition = headerY + 80;
+  
       // Title for the report
       pdf.setFontSize(22);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('Student Reviews Report', 10, 40);
-
-      // Iterate over each review and add details to the PDF
-      let yPosition = 50; // Start position for the text
+      pdf.text('Student Reviews Report', 10, yPosition);
+  
+      // Add space after the title and set font for content
+      yPosition += 10;
       pdf.setFontSize(12);
+  
+      // Iterate over each review and add details to the PDF
       filteredReviews.forEach((review, index) => {
         pdf.text(`Review #${index + 1}`, 10, yPosition);
         yPosition += 10;
@@ -150,18 +174,24 @@ const ReviewsPage = () => {
         yPosition += 10;
         pdf.text(`Date: ${new Date(review.createdAt).toLocaleDateString()}`, 10, yPosition);
         yPosition += 15; // Extra space between reviews
-
-        // Check if the yPosition exceeds the page height
+  
+        // Draw a line between reviews
+        pdf.setLineWidth(0.5);
+        pdf.line(10, yPosition, 200, yPosition);
+        yPosition += 10;
+  
+        // Check if the yPosition exceeds the page height, add new page if necessary
         if (yPosition > 270) {
           pdf.addPage();
-          yPosition = 10; // Reset position for the new page
+          yPosition = 20; // Reset position for the new page
         }
       });
-
-      // Save the PDF
+  
+      // Save the generated PDF
       pdf.save('Student_Reviews_Report.pdf');
     };
   };
+  
 
   return (
     <div>

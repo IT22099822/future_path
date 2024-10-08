@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import LogoWithSocial from '../components/LogoWithSocial';
+import NavBar from '../components/NavBar';
 
 const UploadDocumentsPage = () => {
   const { appointmentId } = useParams(); // Fetch the appointmentId from the route
@@ -71,45 +73,60 @@ const UploadDocumentsPage = () => {
   };
 
   return (
-    <div>
-      <h2>Upload Documents for Appointment</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-      
-      <form onSubmit={handleSubmit}>
-        {documents.map((doc, index) => (
-          <div key={index}>
-            <div>
-              <label htmlFor={`description-${index}`}>Document Description:</label>
-              <input
-                type="text"
-                id={`description-${index}`}
-                value={doc.description}
-                onChange={(e) => handleDescriptionChange(index, e)}
-                required
-              />
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a] font-sans">
+      <LogoWithSocial />
+      <NavBar />
 
-            <div>
-              <label htmlFor={`file-${index}`}>Upload File:</label>
-              <input
-                type="file"
-                id={`file-${index}`}
-                accept=".pdf,.jpg,.jpeg"
-                onChange={(e) => handleFileChange(index, e)}
-                required
-              />
-            </div>
-          </div>
-        ))}
+      <div className="flex justify-center items-center w-full mt-10">
+        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-3xl">
+          <h2 className="text-3xl font-semibold mb-6 text-center">Upload Documents for Appointment</h2>
+          {error && <p className="text-red-500">{error}</p>}
+          {success && <p className="text-green-500">{success}</p>}
+          
+          <form onSubmit={handleSubmit}>
+            {documents.map((doc, index) => (
+              <div key={index} className="mb-4">
+                <div className="mb-2">
+                  <label htmlFor={`description-${index}`} className="font-medium">Document Description:</label>
+                  <input
+                    type="text"
+                    id={`description-${index}`}
+                    value={doc.description}
+                    onChange={(e) => handleDescriptionChange(index, e)}
+                    required
+                    className="border rounded-lg p-2 w-full"
+                  />
+                </div>
 
-        {/* Add More Button */}
-        <button type="button" onClick={handleAddMore}>Add More</button>
+                <div className="mb-2">
+                  <label htmlFor={`file-${index}`} className="font-medium">Upload File:</label>
+                  <input
+                    type="file"
+                    id={`file-${index}`}
+                    accept=".pdf,.jpg,.jpeg"
+                    onChange={(e) => handleFileChange(index, e)}
+                    required
+                    className="border rounded-lg p-2 w-full"
+                  />
+                </div>
+              </div>
+            ))}
 
-        <button type="submit">Upload</button>
-      </form>
+            {/* Add More Button */}
+            <button type="button" onClick={handleAddMore} className="bg-teal-500 text-white p-2 rounded-lg hover:bg-teal-600 transition-all duration-300 mb-8 mr-4">
+              Add More
+            </button>
 
-      <button onClick={() => navigate(-1)}>Back to Approved Appointments</button>
+            <button type="submit" className="bg-slate-500 text-white p-2 rounded-lg hover:bg-slate-700 transition-all duration-300 mb-4">
+              Upload
+            </button>
+          </form>
+
+          <button onClick={() => navigate(-1)} className="text-teal-500 underline hover:text-teal-600">
+            Back to Approved Appointments
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
