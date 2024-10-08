@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import NavBar from './components/NavBar';
+import LogoWithSocial from './components/LogoWithSocial';
 
 const AgentProfiles = () => {
   const [agents, setAgents] = useState([]);
@@ -27,58 +29,44 @@ const AgentProfiles = () => {
   }, []);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1 style={{ textAlign: 'center' }}>Agent Profiles</h1>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
-        {agents.length > 0 ? (
-          agents.map((agent) => (
-            <div
-              key={agent._id}
-              style={{
-                border: '1px solid #ccc',
-                borderRadius: '10px',
-                padding: '20px',
-                width: '300px',
-                textAlign: 'center',
-                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-              }}
-            >
-              {/* Display agent's profile image */}
-              <img
-                src={`/${agent.profileImage}`}
-                alt={agent.name}
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  marginBottom: '10px',
-                }}
-              />
-              {/* Agent's name */}
-              <h3 style={{ fontSize: '1.5em', margin: '10px 0' }}>{agent.name}</h3>
-              {/* Agent's bio */}
-              <p style={{ fontSize: '1em', color: '#555' }}>{agent.bio}</p>
-              {/* Button to navigate to the agent's public profile page */}
-              <button
-                style={{
-                  backgroundColor: '#007bff',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  marginTop: '10px',
-                }}
-                onClick={() => handleUserClick(agent.user._id)}
-              >
-                View {agent.name}'s Profile
-              </button>
-            </div>
-          ))
-        ) : (
-          <p style={{ textAlign: 'center' }}>No agent profiles found.</p>
-        )}
+    <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a]">
+      <LogoWithSocial />
+      <NavBar />
+
+      <div className="flex justify-center items-center w-full mt-10">
+        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-3xl">
+          <h1 className="text-3xl font-semibold mb-6 text-center">Agent Profiles</h1>
+          <div className="flex flex-wrap gap-6 justify-center">
+            {agents.length > 0 ? (
+              agents.map((agent) => (
+                <div
+                  key={agent._id}
+                  className="border rounded-lg p-6 w-full sm:w-1/3 text-center shadow-md"
+                >
+                  {/* Display agent's profile image */}
+                  <img
+                    src={`/${agent.profileImage}`}
+                    alt={agent.name}
+                    className="w-24 h-24 rounded-full object-cover mx-auto mb-4"
+                  />
+                  {/* Agent's name */}
+                  <h3 className="text-xl font-semibold mb-2">{agent.name}</h3>
+                  {/* Agent's bio */}
+                  <p className="text-gray-600 mb-4">{agent.bio}</p>
+                  {/* Button to navigate to the agent's public profile page */}
+                  <button
+                    className="bg-teal-500 text-white p-2 rounded-lg hover:bg-teal-600 transition duration-300"
+                    onClick={() => handleUserClick(agent.user._id)}
+                  >
+                    View {agent.name}'s Profile
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="text-center">No agent profiles found.</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

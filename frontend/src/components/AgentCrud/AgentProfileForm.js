@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AgentNavBar from '../components/AgentNavbar';
 
-
 const AgentProfileForm = () => {
   const [agent, setAgent] = useState({
     name: '',
@@ -77,6 +76,19 @@ const AgentProfileForm = () => {
       return;
     }
 
+    // Validation for phone number length
+    if (agent.phone.length !== 10) {
+      setError('Phone number must be exactly 10 digits.');
+      return;
+    }
+
+    // Validation for website URL
+    const urlPattern = new RegExp(/^(https?:\/\/)?([\w-]+(\.[\w-]+)+\/?)([\w-.,@?^=%&:\/~+#]*[\w@?^=%&\/~+#])?$/);
+    if (!urlPattern.test(agent.website)) {
+      setError('Please enter a valid URL.');
+      return;
+    }
+
     setLoading(true);
 
     const formData = new FormData();
@@ -121,27 +133,42 @@ const AgentProfileForm = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type.startsWith('image/')) {
+    const validExtensions = ['image/jpeg', 'image/jpg', 'image/png'];
+    
+    if (file && validExtensions.includes(file.type)) {
       setProfileImage(file);
     } else {
-      alert('Please upload a valid image file.');
+      alert('Please upload a valid image file (jpg, jpeg, or png).');
     }
   };
 
   const handleAdditionalImagesChange = (e) => {
     const files = Array.from(e.target.files);
-    setNewAdditionalImages(files);
+    const validFiles = files.filter(file => {
+      const validExtensions = ['image/jpeg', 'image/jpg', 'image/png'];
+      return validExtensions.includes(file.type);
+    });
+
+    if (validFiles.length !== files.length) {
+      alert('Some files are not valid. Only .jpg, .jpeg, .png files are allowed.');
+    } else {
+      setNewAdditionalImages(validFiles);
+    }
   };
 
   const getImagePreview = (file) => {
-    if (!file) return null;
-    return URL.createObjectURL(file);
+    // Ensure the file is a valid File or Blob object before creating a URL
+    if (file && (file instanceof File || file instanceof Blob)) {
+      return URL.createObjectURL(file);
+    }
+    return null;
   };
 
   useEffect(() => {
     return () => {
+      // Clean up object URLs to prevent memory leaks
       if (profileImage && typeof profileImage !== 'string') {
-        URL.revokeObjectURL(profileImage);
+        URL.revokeObjectURL(getImagePreview(profileImage));
       }
       newAdditionalImages.forEach((img) => {
         if (img instanceof File) {
@@ -185,128 +212,152 @@ const AgentProfileForm = () => {
     }
   };
 
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    const regex = /^[A-Za-z\s]*$/; // Allows only letters and spaces
+    if (regex.test(value)) {
+      setAgent({ ...agent, name: value });
+    }
+  };
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+    const regex = /^\d{0,10}$/; // Allows only digits and limits to 10 digits
+    if (regex.test(value)) {
+      setAgent({ ...agent, phone: value });
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a]">
-      
-      <AgentNavBar/>
+      <AgentNavBar />
       <div className="flex justify-center items-center w-full mt-10">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-xl">
-        <h2 className="text-3xl font-semibold mb-6">Update Profile Information</h2>
+        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-xl">
+          <h2 className="text-3xl font-semibold mb-6">Update Profile Information</h2>
 
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        {success && <p className="text-green-500 mb-4">{success}</p>}
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {success && <p className="text-green-500 mb-4">{success}</p>}
 
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
-          <div className="mb-4">
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={agent.name}
-              onChange={(e) => setAgent({ ...agent, name: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              required
-              disabled={loading}
-            />
-          </div>
-          <div className="mb-4">
-            <textarea
-              name="bio"
-              placeholder="Bio"
-              value={agent.bio}
-              onChange={(e) => setAgent({ ...agent, bio: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              required
-              disabled={loading}
-            />
-          </div>
-          <div className="mb-4">
-            <input
-              type="email"
-              name="contactEmail"
-              placeholder="Contact Email"
-              value={agent.contactEmail}
-              onChange={(e) => setAgent({ ...agent, contactEmail: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              required
-              disabled={loading}
-            />
-          </div>
-          <div className="mb-4">
-            <input
-              type="text"
-              name="phone"
-              placeholder="Phone"
-              value={agent.phone}
-              onChange={(e) => setAgent({ ...agent, phone: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              required
-              disabled={loading}
-            />
-          </div>
-          <div className="mb-4">
-            <input
-              type="text"
-              name="website"
-              placeholder="Website"
-              value={agent.website}
-              onChange={(e) => setAgent({ ...agent, website: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              required
-              disabled={loading}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2">Profile Image</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} className="w-full mb-2" />
-            {profileImage && (
-              <img src={typeof profileImage === 'string' ? profileImage : getImagePreview(profileImage)} alt="Profile Preview" className="w-24 h-24 object-cover mb-2" />
-            )}
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2">Additional Images</label>
-            <input type="file" accept="image/*" multiple onChange={handleAdditionalImagesChange} className="w-full mb-2" />
-            <div className="flex flex-wrap mt-2">
-              {additionalImages.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`Additional Preview ${index + 1}`}
-                  className="w-24 h-24 object-cover mr-2 mb-2"
-                />
-              ))}
-              {newAdditionalImages.map((image, index) => (
-                <img
-                  key={`new-${index}`}
-                  src={getImagePreview(image)}
-                  alt={`New Additional Preview ${index + 1}`}
-                  className="w-24 h-24 object-cover mr-2 mb-2"
-                />
-              ))}
+          <form onSubmit={handleSubmit} encType="multipart/form-data">
+            <div className="mb-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                value={agent.name}
+                onChange={handleNameChange}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+                required
+                disabled={loading}
+              />
             </div>
-          </div>
-          <div className="flex justify-between">
+            <div className="mb-4">
+              <textarea
+                name="bio"
+                placeholder="Bio"
+                value={agent.bio}
+                onChange={(e) => setAgent({ ...agent, bio: e.target.value })}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+                required
+                disabled={loading}
+              />
+            </div>
+            <div className="mb-4">
+              <input
+                type="email"
+                name="contactEmail"
+                placeholder="Contact Email"
+                value={agent.contactEmail}
+                onChange={(e) => setAgent({ ...agent, contactEmail: e.target.value })}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+                required
+                disabled={loading}
+              />
+            </div>
+            <div className="mb-4">
+              <input
+                type="text"
+                name="phone"
+                placeholder="Phone"
+                value={agent.phone}
+                onChange={handlePhoneChange}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+                required
+                disabled={loading}
+              />
+            </div>
+            <div className="mb-4">
+              <input
+                type="url"
+                name="website"
+                placeholder="Website"
+                value={agent.website}
+                onChange={(e) => setAgent({ ...agent, website: e.target.value })}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+                required
+                disabled={loading}
+              />
+            </div>
+
+            {/* Image upload */}
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">Profile Image</label>
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png"
+                onChange={handleImageChange}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+                disabled={loading}
+              />
+              {profileImage && (
+                <div className="mt-2">
+                  <img src={getImagePreview(profileImage)} alt="Profile" className="h-24 w-24 object-cover rounded-lg" />
+                </div>
+              )}
+            </div>
+
+            {/* Additional images upload */}
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">Additional Images</label>
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png"
+                multiple
+                onChange={handleAdditionalImagesChange}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+                disabled={loading}
+              />
+              <div className="flex flex-wrap mt-2">
+                {additionalImages.map((img, idx) => (
+                  <img key={idx} src={img} alt="Additional" className="h-16 w-16 object-cover rounded-lg m-2" />
+                ))}
+                {newAdditionalImages.map((img, idx) => (
+                  <img key={idx} src={getImagePreview(img)} alt="Additional" className="h-16 w-16 object-cover rounded-lg m-2" />
+                ))}
+              </div>
+            </div>
+
             <button
               type="submit"
-              className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
+              className="bg-green-500 text-white px-4 py-2 rounded-lg"
               disabled={loading}
             >
               {loading ? 'Saving...' : 'Save'}
             </button>
+
             <button
               type="button"
               onClick={handleDelete}
-              className="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition duration-200"
+              className="bg-red-500 text-white px-4 py-2 rounded-lg ml-4"
               disabled={loading}
             >
               {loading ? 'Deleting...' : 'Delete Profile'}
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
     </div>
   );
 };

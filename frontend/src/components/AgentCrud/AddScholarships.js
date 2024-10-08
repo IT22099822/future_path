@@ -20,6 +20,19 @@ function AddScholarships() {
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
+    const todayDate = new Date().toISOString().split('T')[0]; // Prevent past dates
+
+    // Input change handler with validation for text fields that should only contain letters and spaces
+    const handleTextInputChange = (e) => {
+        const { name, value } = e.target;
+        const letterRegex = /^[A-Za-z\s]+$/; // Only allows letters and spaces
+
+        if (value === '' || letterRegex.test(value)) {
+            setFormData({ ...formData, [name]: value });
+        }
+    };
+
+    // General input change handler for non-text fields
     const handleChange = (e) => {
         const { name, value, files } = e.target;
         if (name === 'image') {
@@ -29,8 +42,27 @@ function AddScholarships() {
         }
     };
 
+    // URL validation
+    const handleURLChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value }); // Allow user to type without blocking input
+    };
+
+    // Validate URL format on form submission
+    const isValidURL = (url) => {
+        const urlRegex = /^(https?:\/\/)?([\w\d-]+)\.([a-z]{2,6})([/\w\d-]*)*\/?$/;
+        return url === '' || urlRegex.test(url); // Optional field, valid if empty or matches URL pattern
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // URL validation
+        if (!isValidURL(formData.applicationLink)) {
+            setErrorMessage('Please enter a valid URL.');
+            return;
+        }
+
         const token = localStorage.getItem('token');
         if (!token) {
             setErrorMessage('You must be logged in to add a scholarship.');
@@ -66,7 +98,7 @@ function AddScholarships() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a]">
-            <AgentNavBar/>
+            <AgentNavBar />
             
             <div className="flex justify-center items-center w-full mt-10">
                 <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-xl">
@@ -79,7 +111,7 @@ function AddScholarships() {
                                 name="scholarshipTitle" 
                                 placeholder="Scholarship Title" 
                                 value={formData.scholarshipTitle} 
-                                onChange={handleChange} 
+                                onChange={handleTextInputChange} // Validation applied here
                                 className="w-full p-2 border rounded-lg" 
                                 required 
                             />
@@ -90,7 +122,7 @@ function AddScholarships() {
                                 name="organization" 
                                 placeholder="Organization" 
                                 value={formData.organization} 
-                                onChange={handleChange} 
+                                onChange={handleTextInputChange} // Validation applied here
                                 className="w-full p-2 border rounded-lg" 
                                 required 
                             />
@@ -100,6 +132,7 @@ function AddScholarships() {
                                 type="date" 
                                 name="applicationDeadline" 
                                 value={formData.applicationDeadline} 
+                                min={todayDate} // Freeze past dates
                                 onChange={handleChange} 
                                 className="w-full p-2 border rounded-lg" 
                                 required 
@@ -122,7 +155,7 @@ function AddScholarships() {
                                 name="applicationLink" 
                                 placeholder="Application Link" 
                                 value={formData.applicationLink} 
-                                onChange={handleChange} 
+                                onChange={handleURLChange} // URL validation applied here
                                 className="w-full p-2 border rounded-lg" 
                                 required 
                             />
@@ -165,7 +198,7 @@ function AddScholarships() {
                                 name="country" 
                                 placeholder="Country" 
                                 value={formData.country} 
-                                onChange={handleChange} 
+                                onChange={handleTextInputChange} // Validation applied here
                                 className="w-full p-2 border rounded-lg" 
                                 required 
                             />
