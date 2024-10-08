@@ -41,10 +41,6 @@ function AgentHomePage() {
 
       </Link>
 
-      <Link to="/register">
-        <button>Register123</button>
-
-      </Link>
 
 
     </div>

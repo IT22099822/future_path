@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AgentNavBar from '../components/AgentNavbar';
+
 
 const AgentProfileForm = () => {
   const [agent, setAgent] = useState({
@@ -10,15 +12,14 @@ const AgentProfileForm = () => {
     website: '',
   });
   const [profileImage, setProfileImage] = useState(null);
-  const [additionalImages, setAdditionalImages] = useState([]); // Store URLs for additional images
-  const [newAdditionalImages, setNewAdditionalImages] = useState([]); // Store new files to upload
+  const [additionalImages, setAdditionalImages] = useState([]);
+  const [newAdditionalImages, setNewAdditionalImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
   const navigate = useNavigate();
 
-  // Fetch the agent's profile if it exists
   useEffect(() => {
     const fetchAgentProfile = async () => {
       const token = localStorage.getItem('token');
@@ -46,11 +47,9 @@ const AgentProfileForm = () => {
               phone: data.phone || '',
               website: data.website || '',
             });
-            // Set the profile image if it exists
             if (data.profileImage) {
               setProfileImage(data.profileImage);
             }
-            // Set additional images
             if (data.additionalImages) {
               setAdditionalImages(data.additionalImages);
             }
@@ -69,7 +68,6 @@ const AgentProfileForm = () => {
     fetchAgentProfile();
   }, [navigate]);
 
-  // Handle form submission for creating or updating the profile
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
@@ -124,7 +122,7 @@ const AgentProfileForm = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {
-      setProfileImage(file); // Set the selected image file
+      setProfileImage(file);
     } else {
       alert('Please upload a valid image file.');
     }
@@ -132,7 +130,7 @@ const AgentProfileForm = () => {
 
   const handleAdditionalImagesChange = (e) => {
     const files = Array.from(e.target.files);
-    setNewAdditionalImages(files); // Store new files to upload
+    setNewAdditionalImages(files);
   };
 
   const getImagePreview = (file) => {
@@ -140,7 +138,6 @@ const AgentProfileForm = () => {
     return URL.createObjectURL(file);
   };
 
-  // Clear the object URL after component unmounts to avoid memory leaks
   useEffect(() => {
     return () => {
       if (profileImage && typeof profileImage !== 'string') {
@@ -154,10 +151,9 @@ const AgentProfileForm = () => {
     };
   }, [profileImage, newAdditionalImages]);
 
-  // Handle profile deletion
   const handleDelete = async () => {
     const token = localStorage.getItem('token');
-    
+
     if (!token) {
       setError('User not authenticated. Please login.');
       return;
@@ -177,7 +173,7 @@ const AgentProfileForm = () => {
         setSuccess('Profile deleted successfully!');
         setError('');
         setTimeout(() => {
-          navigate('/update-agent-profile'); // Navigate to update agent profile page after deletion
+          navigate('/update-agent-profile');
         }, 2000);
       } else {
         setError('Failed to delete profile');
@@ -192,92 +188,125 @@ const AgentProfileForm = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div>
-      <h2>Update Profile Information</h2>
+    <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a]">
+      
+      <AgentNavBar/>
+      <div className="flex justify-center items-center w-full mt-10">
+      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-xl">
+        <h2 className="text-3xl font-semibold mb-6">Update Profile Information</h2>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {success && <p className="text-green-500 mb-4">{success}</p>}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name</label>
-          <input
-            type="text"
-            defaultValue={agent.name}
-            onChange={(e) => setAgent({ ...agent, name: e.target.value })}
-            required
-            disabled={loading}
-          />
-        </div>
-        <div>
-          <label>Bio</label>
-          <textarea
-            defaultValue={agent.bio}
-            onChange={(e) => setAgent({ ...agent, bio: e.target.value })}
-            disabled={loading}
-          ></textarea>
-        </div>
-        <div>
-          <label>Contact Email</label>
-          <input
-            type="email"
-            defaultValue={agent.contactEmail}
-            onChange={(e) => setAgent({ ...agent, contactEmail: e.target.value })}
-            disabled={loading}
-          />
-        </div>
-        <div>
-          <label>Phone</label>
-          <input
-            type="text"
-            defaultValue={agent.phone}
-            onChange={(e) => setAgent({ ...agent, phone: e.target.value })}
-            disabled={loading}
-          />
-        </div>
-        <div>
-          <label>Website</label>
-          <input
-            type="text"
-            defaultValue={agent.website}
-            onChange={(e) => setAgent({ ...agent, website: e.target.value })}
-            disabled={loading}
-          />
-        </div>
-        <div>
-          <label>Profile Image</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-          {profileImage && (
-            <img src={typeof profileImage === 'string' ? profileImage : getImagePreview(profileImage)} alt="Profile Preview" width="100" />
-          )}
-        </div>
-        <div>
-          <label>Additional Images</label>
-          <input type="file" accept="image/*" multiple onChange={handleAdditionalImagesChange} />
-          <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
-            {additionalImages.map((image, index) => (
-              <img
-                key={index}
-                src={image} // Directly using the URL for additional images
-                alt={`Additional Preview ${index + 1}`}
-                style={{ width: '100px', marginRight: '10px', marginBottom: '10px' }}
-              />
-            ))}
-            {newAdditionalImages.map((image, index) => (
-              <img
-                key={`new-${index}`}
-                src={getImagePreview(image)}
-                alt={`New Additional Preview ${index + 1}`}
-                style={{ width: '100px', marginRight: '10px', marginBottom: '10px' }}
-              />
-            ))}
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <div className="mb-4">
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={agent.name}
+              onChange={(e) => setAgent({ ...agent, name: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              required
+              disabled={loading}
+            />
           </div>
-        </div>
-        <button type="submit" disabled={loading}>Save</button>
-      </form>
-      <button onClick={handleDelete} style={{ marginTop: '10px', backgroundColor: 'red', color: 'white' }} disabled={loading}>
-        Delete Profile
-      </button>
+          <div className="mb-4">
+            <textarea
+              name="bio"
+              placeholder="Bio"
+              value={agent.bio}
+              onChange={(e) => setAgent({ ...agent, bio: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              required
+              disabled={loading}
+            />
+          </div>
+          <div className="mb-4">
+            <input
+              type="email"
+              name="contactEmail"
+              placeholder="Contact Email"
+              value={agent.contactEmail}
+              onChange={(e) => setAgent({ ...agent, contactEmail: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              required
+              disabled={loading}
+            />
+          </div>
+          <div className="mb-4">
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone"
+              value={agent.phone}
+              onChange={(e) => setAgent({ ...agent, phone: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              required
+              disabled={loading}
+            />
+          </div>
+          <div className="mb-4">
+            <input
+              type="text"
+              name="website"
+              placeholder="Website"
+              value={agent.website}
+              onChange={(e) => setAgent({ ...agent, website: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              required
+              disabled={loading}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-2">Profile Image</label>
+            <input type="file" accept="image/*" onChange={handleImageChange} className="w-full mb-2" />
+            {profileImage && (
+              <img src={typeof profileImage === 'string' ? profileImage : getImagePreview(profileImage)} alt="Profile Preview" className="w-24 h-24 object-cover mb-2" />
+            )}
+          </div>
+          <div className="mb-4">
+            <label className="block mb-2">Additional Images</label>
+            <input type="file" accept="image/*" multiple onChange={handleAdditionalImagesChange} className="w-full mb-2" />
+            <div className="flex flex-wrap mt-2">
+              {additionalImages.map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  alt={`Additional Preview ${index + 1}`}
+                  className="w-24 h-24 object-cover mr-2 mb-2"
+                />
+              ))}
+              {newAdditionalImages.map((image, index) => (
+                <img
+                  key={`new-${index}`}
+                  src={getImagePreview(image)}
+                  alt={`New Additional Preview ${index + 1}`}
+                  className="w-24 h-24 object-cover mr-2 mb-2"
+                />
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-between">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
+              disabled={loading}
+            >
+              {loading ? 'Saving...' : 'Save'}
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition duration-200"
+              disabled={loading}
+            >
+              {loading ? 'Deleting...' : 'Delete Profile'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
     </div>
   );
 };
