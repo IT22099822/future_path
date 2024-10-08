@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import logo from '../../images/future_path_logo.png'; // Adjust the path according to your structure
+import LogoWithSocial from '../components/LogoWithSocial';
+import NavBar from '../components/NavBar';
 
 const AgentPaymentsPage = () => {
   const [payments, setPayments] = useState([]);
@@ -132,53 +134,76 @@ const AgentPaymentsPage = () => {
       pdf.save('Payments_Report.pdf');
     };
   };
-  
 
-  if (loading) return <p>Loading payments...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className="text-gray-500">Loading payments...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div>
-      <h2>Payments Received</h2>
-      <input
-        type="text"
-        placeholder="Search by description, bank, or notes..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)} // Update search term
-      />
-      <button onClick={downloadPDF}>Download PDF</button>
-      <div id="pdf-content">
-        {payments.length === 0 ? (
-          <p>No payments found.</p>
-        ) : (
-          <ul>
-            {payments.map((payment) => (
-              <li key={payment._id}>
-                <p><strong>Amount:</strong> {payment.paymentAmount}</p>
-                <p><strong>Date:</strong> {new Date(payment.paymentDate).toLocaleDateString()}</p>
-                <p><strong>Description:</strong> {payment.paymentDescription}</p>
-                <p><strong>Bank:</strong> {payment.bankInstitution}</p>
-                <p><strong>Status:</strong> {payment.paymentStatus}</p>
-                <p><strong>Student Notes:</strong> {payment.studentNotes}</p>
-                <p><strong>Payment Slip:</strong>
-                  {payment.paymentSlip && (
-                    <a 
-                      href={`http://localhost:5000/${payment.paymentSlip}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                    >
-                      View Slip
-                    </a>
-                  )}
-                </p>
-                <div>
-                  <button onClick={() => updatePaymentStatus(payment._id, 'Approved')}>Approve</button>
-                  <button onClick={() => updatePaymentStatus(payment._id, 'Rejected')}>Reject</button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+    <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a] font-sans">
+      <LogoWithSocial />
+      <NavBar />
+
+      <div className="flex justify-center items-center w-full mt-10">
+        <div className="bg-white bg-opacity-50 shadow-lg rounded-lg p-8 w-full max-w-4xl mx-4"> 
+          <h2 className="text-3xl font-normal mb-6">Payments Received</h2>
+          <input
+            type="text"
+            placeholder="Search by description, bank, or notes..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+            className="w-full p-2 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
+          <button
+            onClick={downloadPDF}
+            className="w-full bg-teal-500 text-white p-3 rounded-lg hover:bg-teal-600 transition-all duration-300 transform hover:translate-y-1 hover:shadow-lg mb-4"
+          >
+            Download Payments as PDF
+          </button>
+          <div id="pdf-content">
+            {payments.length === 0 ? (
+              <p>No payments found.</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Use grid layout for two columns */}
+                {payments.map((payment) => (
+                  <div key={payment._id} className="mb-4 p-4 border rounded-lg shadow-md bg-gray-50">
+                    <p className="font-normal text-lg mb-2"><strong>Amount:</strong> {payment.paymentAmount}</p>
+                    <p className="font-normal text-lg mb-2"><strong>Date:</strong> {new Date(payment.paymentDate).toLocaleDateString()}</p>
+                    <p className="font-normal text-lg mb-2"><strong>Description:</strong> {payment.paymentDescription}</p>
+                    <p className="font-normal text-lg mb-2"><strong>Bank:</strong> {payment.bankInstitution}</p>
+                    <p className="font-normal text-lg mb-2"><strong>Status:</strong> {payment.paymentStatus}</p>
+                    <p className="font-normal text-lg mb-2"><strong>Student Notes:</strong> {payment.studentNotes}</p>
+                    <p className="font-normal text-lg mb-2"><strong>Payment Slip:</strong>
+                      {payment.paymentSlip && (
+                        <a 
+                          href={`http://localhost:5000/${payment.paymentSlip}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline hover:text-blue-600"
+                        >
+                          View Slip
+                        </a>
+                      )}
+                    </p>
+                    <div className="flex justify-between mt-4">
+                      <button
+                        onClick={() => updatePaymentStatus(payment._id, 'Approved')}
+                        className="w-1/2 bg-teal-500 text-white p-3 rounded-lg hover:bg-teal-600 transition-all duration-300 transform hover:translate-y-1 hover:shadow-lg mr-2"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => updatePaymentStatus(payment._id, 'Rejected')}
+                        className="w-1/2 bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition-all duration-300 transform hover:translate-y-1 hover:shadow-lg"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

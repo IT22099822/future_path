@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import NavBar from '../components/NavBar';
+import LogoWithSocial from '../components/LogoWithSocial';
 import jsPDF from 'jspdf';
 import logo from '../../images/future_path_logo.png'; // Adjust this path to your logo
 
 function UpdateScholarships() {
     const [scholarships, setScholarships] = useState([]);
-    const [filteredScholarships, setFilteredScholarships] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedScholarship, setSelectedScholarship] = useState(null); // For pop-up
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -21,10 +25,7 @@ function UpdateScholarships() {
                 }
                 return response.json();
             })
-            .then((data) => {
-                setScholarships(data);
-                setFilteredScholarships(data); // Initialize with all scholarships
-            })
+            .then((data) => setScholarships(data))
             .catch((error) => {
                 console.error('Error fetching scholarships:', error);
                 setError(error.message);
@@ -32,14 +33,20 @@ function UpdateScholarships() {
     }, []);
 
     const handleSearch = (event) => {
-        const value = event.target.value;
-        setSearchTerm(value);
-        // Filter scholarships based on the search term
-        const filtered = scholarships.filter(scholarship => 
-            scholarship.scholarshipTitle.toLowerCase().includes(value.toLowerCase()) ||
-            scholarship.organization.toLowerCase().includes(value.toLowerCase())
-        );
-        setFilteredScholarships(filtered);
+        setSearchTerm(event.target.value);
+    };
+
+    const filteredScholarships = scholarships.filter(scholarship =>
+        scholarship.scholarshipTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        scholarship.organization.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const handleScholarshipClick = (scholarship) => {
+        setSelectedScholarship(scholarship);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedScholarship(null);
     };
 
     const handleDelete = async (id) => {
@@ -54,7 +61,6 @@ function UpdateScholarships() {
 
             if (response.ok) {
                 setScholarships(scholarships.filter((scholarship) => scholarship._id !== id));
-                setFilteredScholarships(filteredScholarships.filter((scholarship) => scholarship._id !== id));
                 alert('Scholarship deleted successfully');
             } else {
                 const result = await response.json();
@@ -78,10 +84,6 @@ function UpdateScholarships() {
     
             // Set up the header
             const headerY = 10; // Y position for header
-            const headerWidth = 180; // Width of the header box
-            const headerHeight = 65; // Height of the header box
-    
-            // Move company information further to the right
             const textX = 90; // Increased X position for text to move it further right
             pdf.text('Future Path (PVT) LTD', textX, headerY + 10);
             pdf.text('SLIIT, Malabe, Colombo', textX, headerY + 20);
@@ -98,16 +100,13 @@ function UpdateScholarships() {
             pdf.setLineWidth(0.5); // Set line width
             pdf.line(10, headerY + 70, 200, headerY + 70); // Draw the line from left to right
     
-            // Add an extra line after the separator
-            let yPosition = headerY + 80; // Move content down one line
-    
             // Title for the report
             pdf.setFontSize(22);
             pdf.setFont('helvetica', 'bold');
-            pdf.text('Scholarship Listings Report', 10, yPosition); // Adjusted position for report title
+            pdf.text('Scholarship Listings Report', 10, 80); // Adjusted position for report title
     
             // Iterate over each scholarship and add the details to the PDF
-            yPosition += 10; // Add space after the title
+            let yPosition = 90; // Move content down one line
             pdf.setFontSize(12);
             filteredScholarships.forEach((scholarship, index) => {
                 pdf.text(`Scholarship #${index + 1}`, 10, yPosition);
@@ -119,8 +118,6 @@ function UpdateScholarships() {
                 pdf.text(`Application Deadline: ${new Date(scholarship.applicationDeadline).toLocaleDateString()}`, 10, yPosition);
                 yPosition += 10;
                 pdf.text(`Eligibility Criteria: ${scholarship.eligibilityCriteria}`, 10, yPosition);
-                yPosition += 10;
-                pdf.text(`Application Link: ${scholarship.applicationLink}`, 10, yPosition);
                 yPosition += 10;
                 pdf.text(`Description: ${scholarship.description}`, 10, yPosition);
                 yPosition += 10;
@@ -149,47 +146,84 @@ function UpdateScholarships() {
             pdf.save('scholarships_report.pdf');
         };
     };
-    
 
     return (
-        <div>
-            <h1>Your Scholarships</h1>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a] p-4">
+            <LogoWithSocial />
+            <NavBar />
 
-            <input 
-                type="text" 
-                placeholder="Search Scholarships..." 
-                value={searchTerm} 
-                onChange={handleSearch} 
-            />
-            <button onClick={generatePDF}>Download Scholarships as PDF</button>
+            <div className="container mx-auto mt-10 p-6 bg-opacity-70 shadow-lg rounded-lg">
+                <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-4xl font-bold text-white">Scholarships</h1>
+                    <div className="flex items-center">
+                        <input
+                            type="text"
+                            placeholder="Search Scholarships..."
+                            value={searchTerm}
+                            onChange={handleSearch}
+                            className="p-2 border border-gray-300 rounded w-full max-w-xs mr-4"
+                        />
+                        <button 
+                            onClick={generatePDF} 
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            Download PDF
+                        </button>
+                    </div>
+                </div>
 
-            <ul>
-                {filteredScholarships.map((scholarship) => (
-                    <li key={scholarship._id}>
-                        <h2>{scholarship.scholarshipTitle}</h2>
-                        <p><strong>Organization:</strong> {scholarship.organization}</p>
-                        <p><strong>Application Deadline:</strong> {new Date(scholarship.applicationDeadline).toLocaleDateString()}</p>
-                        <p><strong>Eligibility Criteria:</strong> {scholarship.eligibilityCriteria}</p>
-                        <p><strong>Application Link:</strong> <a href={scholarship.applicationLink} target="_blank" rel="noopener noreferrer">{scholarship.applicationLink}</a></p>
-                        <p><strong>Description:</strong> {scholarship.description}</p>
-                        <p><strong>Type:</strong> {scholarship.scholarshipType}</p>
-                        <p><strong>Field of Study:</strong> {scholarship.fieldOfStudy}</p>
-                        <p><strong>Country:</strong> {scholarship.country}</p>
-                        <p><strong>Application Requirements:</strong> {scholarship.applicationRequirements}</p>
-
-                        {/* Display scholarship image if available */}
-                        {scholarship.image && (
-                            <div>
-                                <img src={scholarship.image} alt="Scholarship" style={{ width: '200px', height: 'auto' }} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredScholarships.map((scholarship) => (
+                        <div
+                            key={scholarship._id}
+                            className="bg-white shadow-md rounded-lg p-4 cursor-pointer transition-all duration-300 transform hover:scale-105"
+                            onClick={() => handleScholarshipClick(scholarship)}
+                        >
+                            <img
+                                src={scholarship.image} // Assuming each scholarship has an image URL
+                                alt={`${scholarship.scholarshipTitle} image`}
+                                className="w-full h-32 object-cover rounded-md mb-4"
+                            />
+                            <h2 className="text-lg font-semibold mb-1">{scholarship.scholarshipTitle}</h2>
+                            <p className="text-gray-600"><strong>Organization:</strong> {scholarship.organization}</p>
+                            <p className="text-gray-600"><strong>Application Deadline:</strong> {new Date(scholarship.applicationDeadline).toLocaleDateString()}</p>
+                            <div className="flex justify-between mt-4">
+                                <button 
+                                    onClick={() => handleDelete(scholarship._id)} 
+                                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                                >
+                                    Delete
+                                </button>
+                                <button 
+                                    onClick={() => navigate(`/update-scholarship/${scholarship._id}`)} 
+                                    className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
+                                >
+                                    Update
+                                </button>
                             </div>
-                        )}
+                        </div>
+                    ))}
+                </div>
 
-                        <button onClick={() => handleDelete(scholarship._id)}>Delete</button>
-                        <button onClick={() => window.location.href = `/update-scholarship/${scholarship._id}`}>Update</button>
-                    </li>
-                ))}
-            </ul>
+                {selectedScholarship && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                        <div className="bg-white p-6 rounded-lg w-11/12 max-w-lg">
+                            <h2 className="text-2xl font-bold mb-4">{selectedScholarship.scholarshipTitle}</h2>
+                            <p><strong>Organization:</strong> {selectedScholarship.organization}</p>
+                            <p><strong>Application Deadline:</strong> {new Date(selectedScholarship.applicationDeadline).toLocaleDateString()}</p>
+                            <p><strong>Eligibility Criteria:</strong> {selectedScholarship.eligibilityCriteria}</p>
+                            <p><strong>Description:</strong> {selectedScholarship.description}</p>
+                            <p><strong>Type:</strong> {selectedScholarship.scholarshipType}</p>
+                            <p><strong>Field of Study:</strong> {selectedScholarship.fieldOfStudy}</p>
+                            <p><strong>Country:</strong> {selectedScholarship.country}</p>
+                            <p><strong>Application Requirements:</strong> {selectedScholarship.applicationRequirements}</p>
+                            <button onClick={handleCloseModal} className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Close</button>
+                        </div>
+                    </div>
+                )}
+
+                {error && <p className="text-red-500 mt-4">{error}</p>}
+            </div>
         </div>
     );
 }

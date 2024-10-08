@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import LogoWithSocial from "../components/LogoWithSocial";
+import NavBar from "../components/NavBar";
 
 function UpdateUniversity() {
   const { id } = useParams(); // Get the university ID from the URL
@@ -90,72 +93,102 @@ function UpdateUniversity() {
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
-    <div>
-      <h1>Update University</h1>
-      <form onSubmit={handleUpdate} encType="multipart/form-data">
-        <input
-          type="text"
-          placeholder="University Name"
-          value={university?.universityName || ''}
-          onChange={(e) => setUniversity({ ...university, universityName: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Country"
-          value={university?.country || ''}
-          onChange={(e) => setUniversity({ ...university, country: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="City"
-          value={university?.city || ''}
-          onChange={(e) => setUniversity({ ...university, city: e.target.value })}
-          required
-        />
-        <input
-          type="url"
-          placeholder="Website URL"
-          value={university?.websiteURL || ''}
-          onChange={(e) => setUniversity({ ...university, websiteURL: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Available Programs"
-          value={university?.availablePrograms || ''}
-          onChange={(e) => setUniversity({ ...university, availablePrograms: e.target.value })}
-        />
-        <textarea
-          placeholder="Admission Requirements"
-          value={university?.admissionRequirements || ''}
-          onChange={(e) => setUniversity({ ...university, admissionRequirements: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Established Year"
-          value={university?.establishedYear || ''}
-          onChange={(e) => setUniversity({ ...university, establishedYear: e.target.value })}
-          min="1000" max="2100"
-        />
-        
-        {/* File input for image upload */}
-        <input 
-          type="file" 
-          accept="image/*" 
-          onChange={handleImageChange} 
-        />
-        
-        {/* Image preview */}
-        {preview && (
-          <div>
-            <img src={preview} alt="University Preview" style={{ width: '200px', height: 'auto' }} />
-          </div>
-        )}
+    <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a]">
+      <LogoWithSocial />
+      <NavBar />
+      
+      <div className="flex justify-center items-center w-full mt-10">
+        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-xl">
+          <h1 className="text-3xl font-semibold mb-6 text-center">Update University</h1>
+          
+          {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+          
+          <form onSubmit={handleUpdate} encType="multipart/form-data" className="space-y-4">
+            <input
+              type="text"
+              placeholder="University Name"
+              value={university?.universityName || ''}
+              onChange={(e) => setUniversity({ ...university, universityName: e.target.value })}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+            <input
+              type="text"
+              placeholder="Country"
+              value={university?.country || ''}
+              onChange={(e) => setUniversity({ ...university, country: e.target.value })}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+            <input
+              type="text"
+              placeholder="City"
+              value={university?.city || ''}
+              onChange={(e) => setUniversity({ ...university, city: e.target.value })}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+            <input
+              type="url"
+              placeholder="Website URL"
+              value={university?.websiteURL || ''}
+              onChange={(e) => setUniversity({ ...university, websiteURL: e.target.value })}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+            <input
+              type="text"
+              placeholder="Available Programs"
+              value={university?.availablePrograms || ''}
+              onChange={(e) => setUniversity({ ...university, availablePrograms: e.target.value })}
+              className="w-full p-2 border rounded-lg"
+            />
+            <textarea
+              placeholder="Admission Requirements"
+              value={university?.admissionRequirements || ''}
+              onChange={(e) => setUniversity({ ...university, admissionRequirements: e.target.value })}
+              className="w-full p-2 border rounded-lg"
+            />
+            <input
+              type="number"
+              placeholder="Established Year"
+              value={university?.establishedYear || ''}
+              onChange={(e) => setUniversity({ ...university, establishedYear: e.target.value })}
+              min="1000" max="2100"
+              className="w-full p-2 border rounded-lg"
+            />
+            
+            {/* File input for image upload */}
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleImageChange} 
+              className="w-full p-2 border rounded-lg" 
+            />
+            
+            {/* Image preview */}
+            {preview && (
+              <div>
+                <img src={preview} alt="University Preview" className="w-52 h-auto my-4" />
+              </div>
+            )}
 
-        <button type="submit">Update University</button>
-      </form>
+            <button
+              type="submit"
+              className="w-full bg-teal-500 text-white p-3 rounded-lg hover:bg-teal-600 transition-all duration-300 transform hover:translate-y-1 hover:shadow-lg"
+            >
+              Update University
+            </button>
+          </form>
+
+          <button
+            className="mt-4 w-full bg-white border border-teal-500 text-teal-500 p-3 rounded-lg hover:bg-teal-500 hover:text-white transition-all duration-300 transform hover:translate-y-1 hover:shadow-lg"
+            onClick={() => navigate('/update-universities')}
+          >
+            Back to University List
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

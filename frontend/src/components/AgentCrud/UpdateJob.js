@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import LogoWithSocial from "../components/LogoWithSocial";
+import NavBar from "../components/NavBar";
 
 function UpdateJob() {
   const { id } = useParams(); // Get the job ID from the URL
@@ -90,85 +93,120 @@ function UpdateJob() {
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
-    <div>
-      <h1>Update Job</h1>
-      <form onSubmit={handleUpdate} encType="multipart/form-data">
-        <input
-          type="text"
-          placeholder="Job Title"
-          value={job?.jobTitle || ''}
-          onChange={(e) => setJob({ ...job, jobTitle: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Company Name"
-          value={job?.companyName || ''}
-          onChange={(e) => setJob({ ...job, companyName: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Location"
-          value={job?.location || ''}
-          onChange={(e) => setJob({ ...job, location: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Employment Type"
-          value={job?.employmentType || ''}
-          onChange={(e) => setJob({ ...job, employmentType: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Salary Range"
-          value={job?.salaryRange || ''}
-          onChange={(e) => setJob({ ...job, salaryRange: e.target.value })}
-        />
-        <textarea
-          placeholder="Job Description"
-          value={job?.jobDescription || ''}
-          onChange={(e) => setJob({ ...job, jobDescription: e.target.value })}
-          required
-        />
-        <textarea
-          placeholder="Requirements"
-          value={job?.requirements || ''}
-          onChange={(e) => setJob({ ...job, requirements: e.target.value })}
-          required
-        />
-        <input
-          type="date"
-          placeholder="Application Deadline"
-          value={job?.applicationDeadline ? new Date(job.applicationDeadline).toISOString().substring(0, 10) : ''}
-          onChange={(e) => setJob({ ...job, applicationDeadline: e.target.value })}
-        />
-        <input
-          type="url"
-          placeholder="Website URL"
-          value={job?.websiteURL || ''}
-          onChange={(e) => setJob({ ...job, websiteURL: e.target.value })}
-        />
-        
-        {/* File input for image upload */}
-        <input 
-          type="file" 
-          name="image" 
-          accept="image/*" 
-          onChange={handleImageChange} 
-        />
-        
-        {/* Image preview */}
-        {preview && (
-          <div>
-            <img src={preview} alt="Job Preview" style={{ width: '200px', height: 'auto' }} />
-          </div>
-        )}
+    <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a]">
+      <LogoWithSocial />
+      <NavBar />
+      
+      <div className="flex justify-center items-center w-full mt-10">
+        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-xl">
+          <h1 className="text-3xl font-semibold mb-6 text-center">Update Job</h1>
+          
+          {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+          
+          <form onSubmit={handleUpdate} encType="multipart/form-data" className="space-y-4">
+            {/* Job Title */}
+            <input
+              type="text"
+              placeholder="Job Title"
+              value={job?.jobTitle || ''}
+              onChange={(e) => setJob({ ...job, jobTitle: e.target.value })}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+            {/* Company Name */}
+            <input
+              type="text"
+              placeholder="Company Name"
+              value={job?.companyName || ''}
+              onChange={(e) => setJob({ ...job, companyName: e.target.value })}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+            {/* Location */}
+            <input
+              type="text"
+              placeholder="Location"
+              value={job?.location || ''}
+              onChange={(e) => setJob({ ...job, location: e.target.value })}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+            {/* Employment Type */}
+            <input
+              type="text"
+              placeholder="Employment Type"
+              value={job?.employmentType || ''}
+              onChange={(e) => setJob({ ...job, employmentType: e.target.value })}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+            {/* Salary Range */}
+            <input
+              type="text"
+              placeholder="Salary Range"
+              value={job?.salaryRange || ''}
+              onChange={(e) => setJob({ ...job, salaryRange: e.target.value })}
+              className="w-full p-2 border rounded-lg"
+            />
+            {/* Job Description */}
+            <textarea
+              placeholder="Job Description"
+              value={job?.jobDescription || ''}
+              onChange={(e) => setJob({ ...job, jobDescription: e.target.value })}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+            {/* Requirements */}
+            <textarea
+              placeholder="Requirements"
+              value={job?.requirements || ''}
+              onChange={(e) => setJob({ ...job, requirements: e.target.value })}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+            {/* Application Deadline */}
+            <input
+              type="date"
+              placeholder="Application Deadline"
+              value={job?.applicationDeadline ? new Date(job.applicationDeadline).toISOString().substring(0, 10) : ''}
+              onChange={(e) => setJob({ ...job, applicationDeadline: e.target.value })}
+              className="w-full p-2 border rounded-lg"
+            />
+            {/* Website URL */}
+            <input
+              type="url"
+              placeholder="Website URL"
+              value={job?.websiteURL || ''}
+              onChange={(e) => setJob({ ...job, websiteURL: e.target.value })}
+              className="w-full p-2 border rounded-lg"
+            />
+            
+            {/* File input for image upload */}
+            <input 
+              type="file" 
+              name="image" 
+              accept="image/*" 
+              onChange={handleImageChange} 
+              className="w-full p-2 border rounded-lg"
+            />
+            
+            {/* Image preview */}
+            {preview && (
+              <div>
+                <img src={preview} alt="Job Preview" style={{ width: '200px', height: 'auto' }} />
+              </div>
+            )}
 
-        <button type="submit">Update Job</button>
-      </form>
+            {/* Update Job Button */}
+            <button
+              type="submit"
+              className="w-full bg-teal-500 text-white p-3 rounded-lg hover:bg-teal-600 transition-all duration-300 transform hover:translate-y-1 hover:shadow-lg"
+            >
+              Update Job
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
