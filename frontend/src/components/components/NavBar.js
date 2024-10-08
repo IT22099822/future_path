@@ -19,7 +19,7 @@ const NavBar = () => {
         className={`max-w-[1820px] ps-2 mx-4 md:flex md:mx-16 mt-5 bg-gray-300/70 rounded-2xl h-16.5
         transition-transform duration-700 ease-in-out transform ${
           isVisible ? "translate-x-0" : "translate-x-full"
-        } sticky top-0 z-50 backdrop-blur-1xl`}
+        }  top-0 z-50 backdrop-blur-1xl`}
         style={{ background: "rgba(255, 255, 255, 0.8)" }} // Optional: Semi-transparent background
       >
         {/* Navigation Items */}
