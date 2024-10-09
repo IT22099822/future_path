@@ -68,7 +68,7 @@ const NavBar = () => {
           to="/login"
           className="hover:bg-teal-500 hover:scale-105 hover:shadow-lg p-3 rounded-2xl hover:text-white transition text-lg flex items-center justify-start"
         >
-          Log
+          LogOut
         </Link>
       </div>
 
