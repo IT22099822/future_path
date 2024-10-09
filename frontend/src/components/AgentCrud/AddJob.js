@@ -19,6 +19,7 @@ function AddJob() {
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
+    // Function to handle input changes
     const handleChange = (e) => {
         const { name, value, files } = e.target;
 
@@ -29,8 +30,50 @@ function AddJob() {
         }
     };
 
+    // Job title and location validations (only letters allowed)
+    const handleTextInputChange = (e) => {
+        const { name, value } = e.target;
+        const letterRegex = /^[A-Za-z\s]+$/; // Only allows letters and spaces
+
+        if (value === '' || letterRegex.test(value)) {
+            setFormData({ ...formData, [name]: value });
+        }
+    };
+
+    // Salary range validation (only digits allowed)
+    const handleSalaryChange = (e) => {
+        const { name, value } = e.target;
+        const digitRegex = /^\d*$/; // Only allows digits
+
+        if (digitRegex.test(value)) {
+            setFormData({ ...formData, [name]: value });
+        }
+    };
+
+    // URL input validation
+    const handleURLChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value }); // Allow user to type without blocking input
+    };
+
+    // Validate URL on form submit
+    const isValidURL = (url) => {
+        const urlRegex = /^(https?:\/\/)?([\w\d-]+)\.([a-z]{2,6})([/\w\d-]*)*\/?$/;
+        return url === '' || urlRegex.test(url); // Optional field, valid if empty or matches URL pattern
+    };
+
+    // Prevent past dates from being selected in the application deadline field
+    const todayDate = new Date().toISOString().split('T')[0];
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validate URL before submitting
+        if (!isValidURL(formData.websiteURL)) {
+            setErrorMessage('Please enter a valid URL.');
+            return;
+        }
+
         const token = localStorage.getItem('token');
         if (!token) {
             setErrorMessage('You must be logged in to add a job.');
@@ -80,7 +123,7 @@ function AddJob() {
                                 name="jobTitle" 
                                 placeholder="Job Title" 
                                 value={formData.jobTitle} 
-                                onChange={handleChange} 
+                                onChange={handleTextInputChange} 
                                 className="w-full p-2 border rounded-lg" 
                                 required 
                             />
@@ -102,7 +145,7 @@ function AddJob() {
                                 name="location" 
                                 placeholder="Location" 
                                 value={formData.location} 
-                                onChange={handleChange} 
+                                onChange={handleTextInputChange} 
                                 className="w-full p-2 border rounded-lg" 
                                 required 
                             />
@@ -128,7 +171,7 @@ function AddJob() {
                                 name="salaryRange" 
                                 placeholder="Salary Range (optional)" 
                                 value={formData.salaryRange} 
-                                onChange={handleChange} 
+                                onChange={handleSalaryChange} 
                                 className="w-full p-2 border rounded-lg" 
                             />
                         </div>
@@ -157,6 +200,7 @@ function AddJob() {
                                 type="date" 
                                 name="applicationDeadline" 
                                 value={formData.applicationDeadline} 
+                                min={todayDate} // Freeze past dates
                                 onChange={handleChange} 
                                 className="w-full p-2 border rounded-lg" 
                                 required 
@@ -168,7 +212,7 @@ function AddJob() {
                                 name="websiteURL" 
                                 placeholder="Website URL (optional)" 
                                 value={formData.websiteURL} 
-                                onChange={handleChange} 
+                                onChange={handleURLChange} 
                                 className="w-full p-2 border rounded-lg" 
                             />
                         </div>

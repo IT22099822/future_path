@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LogoWithSocial from "../components/LogoWithSocial";
 import AgentNavBar from '../components/AgentNavbar';
 
 function AddUniversities() {
@@ -17,19 +16,48 @@ function AddUniversities() {
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
+    // Helper function to validate letters only
+    const isLettersOnly = (value) => /^[A-Za-z\s]+$/.test(value);
+
+    // Helper function to validate URL
+    const isValidURL = (value) => {
+        try {
+            new URL(value);
+            return true;
+        } catch {
+            return false;
+        }
+    };
+
+    // Handle input changes with validation
     const handleChange = (e) => {
         const { name, value, files } = e.target;
 
         if (name === 'image') {
             setFormData({ ...formData, image: files[0] });
+        } else if (name === 'universityName' || name === 'country' || name === 'city') {
+            if (isLettersOnly(value)) {
+                setFormData({ ...formData, [name]: value });
+            }
+        } else if (name === 'establishedYear') {
+            if (/^\d{0,4}$/.test(value)) { // Only allow up to 4 digits
+                setFormData({ ...formData, [name]: value });
+            }
         } else {
             setFormData({ ...formData, [name]: value });
         }
     };
 
+    // Handle form submission with validation
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('token'); 
+        const token = localStorage.getItem('token');
+
+        // Validations
+        if (!isValidURL(formData.websiteURL)) {
+            setErrorMessage('Please enter a valid URL.');
+            return;
+        }
 
         const universityData = new FormData();
         Object.keys(formData).forEach((key) => {
@@ -42,7 +70,7 @@ function AddUniversities() {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
-                body: universityData, 
+                body: universityData,
             });
             const result = await response.json();
             if (response.ok) {
@@ -59,97 +87,96 @@ function AddUniversities() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a]">
-            
-            <AgentNavBar/>
-            
+            <AgentNavBar />
             <div className="flex justify-center items-center w-full mt-10">
                 <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-xl">
                     <h1 className="text-3xl font-semibold mb-6">Add University</h1>
                     {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
                     <form onSubmit={handleSubmit} encType="multipart/form-data">
                         <div className="mb-4">
-                            <input 
-                                type="text" 
-                                name="universityName" 
-                                placeholder="University Name" 
-                                value={formData.universityName} 
-                                onChange={handleChange} 
-                                className="w-full p-2 border rounded-lg" 
-                                required 
+                            <input
+                                type="text"
+                                name="universityName"
+                                placeholder="University Name"
+                                value={formData.universityName}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded-lg"
+                                required
                             />
                         </div>
                         <div className="mb-4">
-                            <input 
-                                type="text" 
-                                name="country" 
-                                placeholder="Country" 
-                                value={formData.country} 
-                                onChange={handleChange} 
-                                className="w-full p-2 border rounded-lg" 
-                                required 
+                            <input
+                                type="text"
+                                name="country"
+                                placeholder="Country"
+                                value={formData.country}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded-lg"
+                                required
                             />
                         </div>
                         <div className="mb-4">
-                            <input 
-                                type="text" 
-                                name="city" 
-                                placeholder="City" 
-                                value={formData.city} 
-                                onChange={handleChange} 
-                                className="w-full p-2 border rounded-lg" 
-                                required 
+                            <input
+                                type="text"
+                                name="city"
+                                placeholder="City"
+                                value={formData.city}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded-lg"
+                                required
                             />
                         </div>
                         <div className="mb-4">
-                            <input 
-                                type="url" 
-                                name="websiteURL" 
-                                placeholder="Website URL" 
-                                value={formData.websiteURL} 
-                                onChange={handleChange} 
-                                className="w-full p-2 border rounded-lg" 
-                                required 
+                            <input
+                                type="url"
+                                name="websiteURL"
+                                placeholder="Website URL"
+                                value={formData.websiteURL}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded-lg"
+                                required
                             />
                         </div>
                         <div className="mb-4">
-                            <input 
-                                type="text" 
-                                name="availablePrograms" 
-                                placeholder="Available Programs" 
-                                value={formData.availablePrograms} 
-                                onChange={handleChange} 
-                                className="w-full p-2 border rounded-lg" 
-                                required 
+                            <input
+                                type="text"
+                                name="availablePrograms"
+                                placeholder="Available Programs"
+                                value={formData.availablePrograms}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded-lg"
+                                required
                             />
                         </div>
                         <div className="mb-4">
-                            <textarea 
-                                name="admissionRequirements" 
-                                placeholder="Admission Requirements" 
-                                value={formData.admissionRequirements} 
-                                onChange={handleChange} 
-                                className="w-full p-2 border rounded-lg" 
-                                required 
+                            <textarea
+                                name="admissionRequirements"
+                                placeholder="Admission Requirements"
+                                value={formData.admissionRequirements}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded-lg"
+                                required
                             />
                         </div>
                         <div className="mb-4">
-                            <input 
-                                type="number" 
-                                name="establishedYear" 
-                                placeholder="Established Year" 
-                                value={formData.establishedYear} 
-                                onChange={handleChange} 
-                                min="1000" 
-                                max="2100" 
-                                className="w-full p-2 border rounded-lg" 
+                            <input
+                                type="number"
+                                name="establishedYear"
+                                placeholder="Established Year"
+                                value={formData.establishedYear}
+                                onChange={handleChange}
+                                min="1000"
+                                max="2100"
+                                className="w-full p-2 border rounded-lg"
+                                required
                             />
                         </div>
                         <div className="mb-6">
-                            <input 
-                                type="file" 
-                                name="image" 
-                                accept="image/*" 
-                                onChange={handleChange} 
+                            <input
+                                type="file"
+                                name="image"
+                                accept="image/*"
+                                onChange={handleChange}
                                 className="w-full p-2 border rounded-lg"
                             />
                         </div>

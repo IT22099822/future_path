@@ -1,4 +1,3 @@
-// AddPaymentPage.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -53,11 +52,12 @@ const AddPaymentPage = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type === 'application/pdf') {
+    const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+    if (file && allowedTypes.includes(file.type)) {
       setPaymentSlip(file);
     } else {
       setPaymentSlip(null);
-      alert('Please upload a PDF file.');
+      alert('Please upload a valid file (PDF, PNG, JPG, JPEG).');
     }
   };
 
@@ -67,6 +67,14 @@ const AddPaymentPage = () => {
     const regex = /^[a-zA-Z\s]*$/; // Regular expression to allow only letters and spaces
     if (regex.test(value) || value === '') {
       setBankInstitution(value);
+    }
+  };
+
+  const handlePaymentAmountChange = (e) => {
+    const value = e.target.value;
+    const regex = /^[0-9]*$/; // Regular expression to allow only digits
+    if (regex.test(value) || value === '') {
+      setPaymentAmount(value);
     }
   };
 
@@ -84,11 +92,11 @@ const AddPaymentPage = () => {
           <form onSubmit={handleSubmit} encType="multipart/form-data">
             <div className="mb-4">
               <input
-                type="number"
+                type="text" // Changed to text to apply regex
                 name="paymentAmount"
                 placeholder="Payment Amount"
                 value={paymentAmount}
-                onChange={(e) => setPaymentAmount(e.target.value)}
+                onChange={handlePaymentAmountChange} // Updated handler
                 className="w-full p-2 border rounded-lg"
                 required
               />
@@ -138,12 +146,12 @@ const AddPaymentPage = () => {
               <input
                 type="file"
                 name="paymentSlip"
-                accept="application/pdf"
+                accept=".pdf,image/png,image/jpeg,image/jpg"
                 onChange={handleFileChange}
                 className="w-full p-2 border rounded-lg"
                 required
               />
-              {paymentSlip && paymentSlip.type === 'application/pdf' && (
+              {paymentSlip && (
                 <div className="mt-2 text-gray-500">{paymentSlip.name}</div>
               )}
             </div>
