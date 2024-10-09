@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import NavBar from '../components/NavBar';
-import LogoWithSocial from '../components/LogoWithSocial';
+import NavBar from '../components/AgentNavbar';
+
 
 const AgentAppointmentsPage = () => {
   const [appointments, setAppointments] = useState([]);
@@ -67,7 +67,7 @@ const AgentAppointmentsPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a] font-sans">
-      <LogoWithSocial />
+    
       <NavBar />
 
       <div className="flex justify-center items-center w-full mt-10">

@@ -63,29 +63,12 @@ const NavBar = () => {
         >
           View My Payments
         </Link>
-        <Link
-          to="/agents"
-          className="hover:bg-teal-500 hover:scale-105 hover:shadow-lg p-3 rounded-2xl hover:text-white transition text-lg flex items-center justify-start"
-        >
-          View All Agents
-        </Link>
-        <Link
-          to="/students"
-          className="hover:bg-teal-500 hover:scale-105 hover:shadow-lg p-3 rounded-2xl hover:text-white transition text-lg flex items-center justify-start"
-        >
-          View All Students
-        </Link>
+
         <Link
           to="/login"
           className="hover:bg-teal-500 hover:scale-105 hover:shadow-lg p-3 rounded-2xl hover:text-white transition text-lg flex items-center justify-start"
         >
-          Login
-        </Link>
-        <Link
-          to="/register"
-          className="hover:bg-teal-500 hover:scale-105 hover:shadow-lg p-3 rounded-2xl hover:text-white transition text-lg flex items-center justify-start"
-        >
-          Register
+          Log
         </Link>
       </div>
 
@@ -93,7 +76,7 @@ const NavBar = () => {
       <div className="flex items-center p-4 mt-auto mb-4">
         <Link
           className="bg-teal-500 text-white font-semibold py-2 px-4 rounded-2xl flex items-center justify-center w-full"
-          to="/students/:id/edit"
+          to="/update-agent-profile"
         >
           Your Profile
         </Link>

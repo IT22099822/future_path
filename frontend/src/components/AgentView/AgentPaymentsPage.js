@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import logo from '../../images/future_path_logo.png'; // Adjust the path according to your structure
-import LogoWithSocial from '../components/LogoWithSocial';
-import NavBar from '../components/NavBar';
+
+import NavBar from '../components/AgentNavbar';
 
 const AgentPaymentsPage = () => {
   const [payments, setPayments] = useState([]);
@@ -140,7 +140,7 @@ const AgentPaymentsPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a] font-sans">
-      <LogoWithSocial />
+     
       <NavBar />
 
       <div className="flex justify-center items-center w-full mt-10">

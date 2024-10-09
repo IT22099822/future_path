@@ -102,22 +102,36 @@ const deleteAgentProfile = asyncHandler(async (req, res) => {
 });
 
 
-// @desc Get all agent profiles (public view)
+// @desc Get all agent profiles or search agents by keyword
 // @route GET /api/agents
 // @access Public
 const getAllAgents = asyncHandler(async (req, res) => {
-  // Fetch agents and populate the 'user' field to get user._id and possibly other details
-  const agents = await Agent.find()
+  const { keyword } = req.query;
+
+  let searchCriteria = {};
+
+  if (keyword) {
+    // Search for agents whose name or bio contains the keyword (case-insensitive)
+    searchCriteria = {
+      $or: [
+        { name: { $regex: keyword, $options: 'i' } }, // Search by name
+        { bio: { $regex: keyword, $options: 'i' } }   // Search by bio
+      ],
+    };
+  }
+
+  // Fetch agents and populate the 'user' field
+  const agents = await Agent.find(searchCriteria)
     .select('name bio profileImage')
-    .populate('user', '_id'); // Populate 'user' and only return '_id'
+    .populate('user', '_id');
 
   if (!agents || agents.length === 0) {
-    res.status(404);
-    throw new Error('No agent profiles found');
+    return res.status(404).json({ message: 'No agent profiles found' });
   }
 
   res.status(200).json(agents);
 });
+
 
 
 module.exports = {

@@ -100,14 +100,26 @@ const deleteStudentProfile = asyncHandler(async (req, res) => {
 });
 
 
-// @desc Get all student profiles (public view)
+// @desc Get all student profiles (public view) or search by keyword
 // @route GET /api/students
 // @access Public
 const getAllStudents = asyncHandler(async (req, res) => {
-  // Fetch students and populate the 'user' field to get user._id and possibly other details
-  const students = await Student.find()
-    .select('name bio profileImage') // Select fields to return
-    .populate('user', '_id'); // Populate 'user' and only return '_id'
+  const { search } = req.query;
+
+  // Build a search query to match any students by name or bio
+  const query = search
+    ? {
+        $or: [
+          { name: { $regex: search, $options: 'i' } }, // Case-insensitive regex search
+          { bio: { $regex: search, $options: 'i' } }
+        ]
+      }
+    : {};
+
+  // Fetch students and populate the 'user' field
+  const students = await Student.find(query)
+    .select('name bio profileImage')
+    .populate('user', '_id');
 
   if (!students || students.length === 0) {
     res.status(404);
@@ -116,6 +128,7 @@ const getAllStudents = asyncHandler(async (req, res) => {
 
   res.status(200).json(students);
 });
+
 
 module.exports = {
   createOrUpdateStudentProfile,

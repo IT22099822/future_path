@@ -3,8 +3,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import logo from '../../images/future_path_logo.png';
-import LogoWithSocial from '../components/LogoWithSocial';
-import NavBar from '../components/NavBar';
+
+import NavBar from '../components/AgentNavbar';
 
 const AppointmentDocumentsPage = () => {
     const { appointmentId } = useParams();
@@ -110,7 +110,7 @@ const AppointmentDocumentsPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-[#9fc3c9] to-[#2a525a] font-sans">
-            <LogoWithSocial />
+           
             <NavBar />
             
             <div className="flex justify-center items-center w-full mt-10">
